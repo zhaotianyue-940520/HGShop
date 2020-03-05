@@ -32,4 +32,35 @@ public class SpecController {
 		int add = specService.add(spec);
 		return add>0;
 	}
+	
+	@RequestMapping("delSpecBatch")
+	@ResponseBody
+	public boolean delSpecBatch(@RequestParam(name="ids[]") int[] ids) {
+		//调用服务
+		int delNum = specService.deleteBatch(ids);
+		return delNum>0;
+	}
+	
+	@RequestMapping("delSpec")
+	@ResponseBody
+	public boolean delSpec(int id) {
+		//调用服务
+		int delNum = specService.delete(id);
+		return delNum>0;
+	}
+	
+	@RequestMapping("getSpec")
+	@ResponseBody
+	public Spec getSpec(int id){
+		return specService.findById(id);
+	}
+	
+	@RequestMapping("update")
+	@ResponseBody
+	public boolean update(Spec spec) {
+		spec.getOptions().removeIf(x->{return x.getOptionName()==null;});
+		//调用服务
+		int result = specService.update(spec);  
+		return result >0;
+	}
 }

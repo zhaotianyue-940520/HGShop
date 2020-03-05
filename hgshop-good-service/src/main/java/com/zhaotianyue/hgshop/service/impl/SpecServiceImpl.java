@@ -20,7 +20,6 @@ public class SpecServiceImpl implements SpecService{
 
 	@Override
 	public PageInfo<Spec> list(String name, int page) {
-		// TODO Auto-generated method stub
 		PageHelper.startPage(page, 3);
 		return new PageInfo<Spec>(specDao.list(name));
 		
@@ -28,7 +27,6 @@ public class SpecServiceImpl implements SpecService{
 
 	@Override
 	public int add(Spec spec) {
-		// TODO Auto-generated method stub
 		//添加主表
 		specDao.addSpec(spec);
 		// 这里才能获取到主键ID
@@ -50,14 +48,25 @@ public class SpecServiceImpl implements SpecService{
 	
 	@Override
 	public int update(Spec spec) {
-		// TODO Auto-generated method stub
-		return specDao.updateSpec(spec);
+		// 去子表中删除
+		specDao.deleteSpecOtions(spec.getId());
+		// 修改主表
+		specDao.updateSpec(spec);	 
+		// 插入子表
+		List<SpecOption> options = spec.getOptions();
+		for (SpecOption specOption : options) {
+			// 设置主表的id
+			specOption.setSpecId(spec.getId());
+			specDao.addOption(specOption);
+		}
+		
+		return 1;
+		 
 	}
 	
 
 	@Override
 	public int delete(int id) {
-		// TODO Auto-generated method stub
 		//删除子表
 		specDao.deleteSpecOtions(id);
 		//删除主表
@@ -67,14 +76,12 @@ public class SpecServiceImpl implements SpecService{
 
 	@Override
 	public Spec findById(int id) {
-		// TODO Auto-generated method stub
 		
 		return specDao.get(id);
 	}
 
 	@Override
 	public int deleteBatch(int[] ids) {
-		// TODO Auto-generated method stub
 		//删除子表
 		specDao.deleteSpecOtionsBatch(ids);
 		//删除主表
